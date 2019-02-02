@@ -1,0 +1,35 @@
+{
+  "name": "e-commerce-back-end",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maurofalcone/e-commerce-back-end.git"
+  },
+  "author": "Mauro Falcone",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maurofalcone/e-commerce-back-end/issues"
+  },
+  "homepage": "https://github.com/maurofalcone/e-commerce-back-end#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "concurrently": "^4.1.0",
+    "express": "^4.16.4",
+    "is-empty": "^1.2.0",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.4.9",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "validator": "^10.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
