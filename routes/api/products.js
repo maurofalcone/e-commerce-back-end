@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const isEmpty = require("is-empty")
 const Product = require("../../models/products")
 
 router.get('/', function(req, res) {
@@ -27,12 +28,14 @@ router.get('/:id', function (req, res) {
 })
 
 router.post('/', function (req, res) {
+  let newId = 0;
   Product.find().limit(1).sort({$natural:-1}).then( product => {
-    if(product === null){
-      throw new Error('Product not found')
+    if(isEmpty(product)) {
+      newId = (newId + 1)
     }
     else {
-      const newId = (product.id + 1)
+      newId = (product.id + 1)
+    }
       Product.findOne({name:req.body.name}).then(product => {
       if(product === null) {
         const newProduct = new Product({
@@ -48,7 +51,7 @@ router.post('/', function (req, res) {
           res.status(400).json({message:'The product already exist'})
         }
       })
-    }
+
   })
   .catch(error => {
     throw new Error(error)

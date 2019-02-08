@@ -2,6 +2,10 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const ProductSchema = new Schema({
+  id: {
+    type: Number,
+    required: true
+  },
   name: {
     type: String,
     required: true
@@ -15,8 +19,8 @@ const ProductSchema = new Schema({
     required: true
   },
   price: {
-    type: Date,
-    default: Date.now
+    type: Number,
+    require: true
   }
 })
 
