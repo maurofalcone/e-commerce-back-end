@@ -34,8 +34,9 @@ router.post('/', function (req, res) {
       newId = (newId + 1)
     }
     else {
-      newId = (product.id + 1)
+      newId = (product[0].id + 1)
     }
+  }).then(() => {
       Product.findOne({name:req.body.name}).then(product => {
       if(product === null) {
         const newProduct = new Product({
@@ -51,8 +52,7 @@ router.post('/', function (req, res) {
           res.status(400).json({message:'The product already exist'})
         }
       })
-
-  })
+    })
   .catch(error => {
     throw new Error(error)
   })
