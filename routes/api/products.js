@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
       if(products)
         res.status(200).json(products)
       else {
-        res.status(400).json({message:'Product not found'})
+        throw new Error({message:'Product not found'})
       }
     })
   .catch(error => {
@@ -28,6 +28,13 @@ router.get('/:id', function (req, res) {
 })
 
 router.post('/', function (req, res) {
+  // Form validation
+  const { errors, isValid } = validateRegisterInput(req.body)
+  // Check validation
+  if (!isValid) {
+    return res.status(400).json(errors)
+  }
+  else {
   let newId = 0;
   Product.find().limit(1).sort({$natural:-1}).then( product => {
     if(isEmpty(product)) {
@@ -49,13 +56,14 @@ router.post('/', function (req, res) {
         newProduct.save().then(product => res.json(product)).catch(err => console.log(err))
       }
       else {
-          res.status(400).json({message:'The product already exist'})
+          throw new Error({message:'The product already exist'})
         }
       })
     })
-  .catch(error => {
-    throw new Error(error)
-  })
+    .catch(error => {
+      throw new Error(error)
+    })
+  }
 })
 
 router.put('/:id', function (req, res) {
@@ -64,7 +72,7 @@ router.put('/:id', function (req, res) {
       res.status(200).json({product})
     }
     else {
-      throw new Error('An error has occurred')
+      throw new Error({message:'An error has ocurred'})
     }
   })
   .catch(error => {
