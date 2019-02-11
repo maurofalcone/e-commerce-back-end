@@ -3,8 +3,20 @@ const cors = require('cors')
 const router = express.Router()
 const isEmpty = require("is-empty")
 const Product = require("../../models/products")
-
 const validateProductInput = require("../../validations/products")
+const multer = require('multer')
+//set the image's storage
+const storage = multer.diskStorage({
+  //assets is the destination folder where ill save the images
+  destination: function (req, file, cb) {
+    cb(null, './assets/')
+  },
+  //store the image with the image name
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+
 
 router.get('/', function(req, res) {
   Product.find({}).then(products => {
