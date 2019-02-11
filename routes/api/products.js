@@ -1,7 +1,10 @@
 const express = require("express")
+const cors = require('cors')
 const router = express.Router()
 const isEmpty = require("is-empty")
 const Product = require("../../models/products")
+
+const validateProductInput = require("../../validations/products")
 
 router.get('/', function(req, res) {
   Product.find({}).then(products => {
@@ -19,7 +22,9 @@ router.get('/', function(req, res) {
 router.get('/:id', function (req, res) {
   Product.findOne({id: req.params.id}).then( product => {
     if(product) {
-      res.status(200).json(product);
+      let products = []
+      products.push(product)
+      res.status(200).json(products);
     }
     else {
       throw new Error ({message:"this product does not exist"})
@@ -29,7 +34,7 @@ router.get('/:id', function (req, res) {
 
 router.post('/', function (req, res) {
   // Form validation
-  const { errors, isValid } = validateRegisterInput(req.body)
+  const { errors, isValid } = validateProductInput(req.body)
   // Check validation
   if (!isValid) {
     return res.status(400).json(errors)
@@ -67,9 +72,19 @@ router.post('/', function (req, res) {
 })
 
 router.put('/:id', function (req, res) {
-  Product.findOneAndUpdate({id:req.params.id},{$set:{name:req.body.name}},{$set:{price:req.body.price}},{$set:{image:req.body.image}},{$set:{description:req.body.description}}).then(product => {
+  console.log('finding one')
+  Product.findOne({id: req.params.id}).then(product => {
     if(product) {
-      res.status(200).json({product})
+      product.name = req.body.name,
+      product.price = req.body.price,
+      product.description = req.body.description
+      product.save()
+      Product.find({}).then(products => {
+        res.status(200).json(products)
+      })
+      .catch(error => {
+          throw new Error(error)
+      })
     }
     else {
       throw new Error({message:'An error has ocurred'})
@@ -83,7 +98,7 @@ router.put('/:id', function (req, res) {
 router.delete('/:id', function (req, res) {
   Product.findOneAndDelete({id:req.params.id}).then( product => {
     if(product) {
-      res.status(200).json({message:'The product has been deleted'})
+      res.status(200).json(product)
     }
     else {
       throw new Error('The product can not be deleted')
