@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
   },
   //store the image with the image name
   filename: function (req, file, cb) {
-    cb(null, file.originalname)
+    cb(null, new Date().toISOString + file.originalname)
   }
 })
 //reject or accept a mimetype file
@@ -22,7 +22,7 @@ const fileFilter = function(req, file, cb) {
     //accept file
     cb(null, true)
   }
-  else{
+  else {
     //reject file
     cb(new Error({message:'file type must be .jpg, .png or .svg'}), false)
   }
@@ -111,7 +111,8 @@ router.put('/:id', function (req, res) {
     if(product) {
       product.name = req.body.name,
       product.price = req.body.price,
-      product.description = req.body.description
+      product.description = req.body.description,
+      product.image = req.file.originalname
       product.save()
       Product.find({}).then(products => {
         res.status(200).json(products)
