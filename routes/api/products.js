@@ -16,6 +16,18 @@ const storage = multer.diskStorage({
     cb(null, file.originalname)
   }
 })
+//reject or accept a mimetype file
+const fileFilter = function(req, file, cb) {
+  if(file.mimetype === 'image/jpg' || 'image/png' || 'image/svg') {
+    //accept file
+    cb(null, true)
+  }
+  else{
+    //reject file
+    cb(new Error({message:'file type must be .jpg, .png or .svg'}), false)
+  }
+}
+
 
 
 router.get('/', function(req, res) {
