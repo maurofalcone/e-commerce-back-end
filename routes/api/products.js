@@ -28,7 +28,6 @@ const fileFilter = function(req, file, cb) {
   }
 }
 
-
 const upload = multer(
   {
     storage:storage,
@@ -66,7 +65,8 @@ router.get('/:id', function (req, res) {
   })
 })
 
-router.post('/', function (req, res) {
+router.post('/', upload.single('image'), function (req, res) {
+  console.log(req.file)
   // Form validation
   const { errors, isValid } = validateProductInput(req.body)
   // Check validation
@@ -90,12 +90,12 @@ router.post('/', function (req, res) {
           name: req.body.name,
           price: req.body.price,
           description: req.body.description,
-          image: req.body.image
+          image: req.file.originalname  //just save the image path so i can get it later
         })
         newProduct.save().then(product => res.json(product)).catch(err => console.log(err))
       }
       else {
-          throw new Error({message:'The product already exist'})
+          res.status(400).json({message:'The product already exist'})
         }
       })
     })
