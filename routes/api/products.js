@@ -9,11 +9,11 @@ const multer = require('multer')
 const storage = multer.diskStorage({
   //assets is the destination folder where ill save the images
   destination: function (req, file, cb) {
-    cb(null, 'assets/')
+    cb(null, './assets/')
   },
   //store the image with the image name
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname)
+    cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname)
   }
 })
 //reject or accept a mimetype file
@@ -90,7 +90,7 @@ router.post('/', upload.single('image'), function (req, res) {
           name: req.body.name,
           price: req.body.price,
           description: req.body.description,
-          image: req.file.originalname  //just save the image path so i can get it later
+          image: req.file.filename  //just save the image path so i can get it later
         })
         newProduct.save().then(product => res.json(product)).catch(err => console.log(err))
       }
