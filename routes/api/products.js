@@ -29,6 +29,16 @@ const fileFilter = function(req, file, cb) {
 }
 
 
+const upload = multer(
+  {
+    storage:storage,
+    limits:
+    {
+      fileSize:(1024 * 1024 * 5) //limit is 5MB
+    },
+    fileFilter:fileFilter
+  }
+)
 
 router.get('/', function(req, res) {
   Product.find({}).then(products => {
