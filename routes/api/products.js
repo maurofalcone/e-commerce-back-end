@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
   },
   //store the image with the image name
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString + file.originalname)
+    cb(null, new Date().toISOString() + file.originalname)
   }
 })
 //reject or accept a mimetype file
