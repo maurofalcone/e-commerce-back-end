@@ -9,16 +9,16 @@ const multer = require('multer')
 const storage = multer.diskStorage({
   //assets is the destination folder where ill save the images
   destination: function (req, file, cb) {
-    cb(null, './assets/')
+    cb(null, 'assets/')
   },
   //store the image with the image name
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname)
+    cb(null, file.originalname)
   }
 })
 //reject or accept a mimetype file
 const fileFilter = function(req, file, cb) {
-  if(file.mimetype === 'image/jpg' || 'image/png' || 'image/svg') {
+  if(file.mimetype === 'image/jpeg' || 'image/png' || 'image/svg') {
     //accept file
     cb(null, true)
   }
