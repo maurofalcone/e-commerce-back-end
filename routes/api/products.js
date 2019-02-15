@@ -2,8 +2,6 @@ const express = require("express")
 const cors = require('cors')
 const router = express.Router()
 const isEmpty = require("is-empty")
-const Product = require("../../models/products")
-const validateProductInput = require("../../validations/products")
 const multer = require('multer')
 //set the image's storage
 const storage = multer.diskStorage({
@@ -18,11 +16,11 @@ const storage = multer.diskStorage({
 })
 //reject or accept a mimetype file
 const fileFilter = function(req, file, cb) {
-  if(file.mimetype === 'image/jpeg' || 'image/png' || 'image/svg') {
+  if(file.mimetype === 'image/jpg' || 'image/png' || 'image/svg') {
     //accept file
     cb(null, true)
   }
-  else {
+  else{
     //reject file
     cb(new Error({message:'file type must be .jpg, .png or .svg'}), false)
   }
@@ -38,6 +36,10 @@ const upload = multer(
     fileFilter:fileFilter
   }
 )
+
+const Product = require("../../models/products")
+
+const validateProductInput = require("../../validations/products")
 
 router.get('/', function(req, res) {
   Product.find({}).then(products => {
@@ -66,71 +68,80 @@ router.get('/:id', function (req, res) {
 })
 
 router.post('/', upload.single('image'), function (req, res) {
+  console.log(req.body)
   console.log(req.file)
   // Form validation
   const { errors, isValid } = validateProductInput(req.body)
   // Check validation
   if (!isValid) {
-    return res.status(400).json(errors)
+    return res.status(400).json({message:'errors'})
   }
   else {
-  let newId = 0;
-  Product.find().limit(1).sort({$natural:-1}).then( product => {
-    if(isEmpty(product)) {
-      newId = (newId + 1)
-    }
-    else {
-      newId = (product[0].id + 1)
-    }
-  }).then(() => {
-      Product.findOne({name:req.body.name}).then(product => {
-      if(product === null) {
-        const newProduct = new Product({
-          id: newId,
-          name: req.body.name,
-          price: req.body.price,
-          description: req.body.description,
-          image: req.file.filename  //just save the image path so i can get it later
-        })
-        newProduct.save().then(product => res.json(product)).catch(err => console.log(err))
+    let newId = 0;
+    Product.find().limit(1).sort({$natural:-1}).then( product => {
+      if(isEmpty(product)) {
+        newId = (newId + 1)
       }
       else {
-          res.status(400).json({message:'The product already exist'})
-        }
-      })
+        newId = (product[0].id + 1)
+      }
     })
     .catch(error => {
-      throw new Error(error)
+      res.status(400).json({message:"an error has occurred"})
     })
+    .then(() => {
+        Product.findOne({name:req.body.name}).then(product => {
+          console.log(product)
+        if(product === null) {
+          const newProduct = new Product({
+            id: newId,
+            name: req.body.name,
+            price: req.body.price,
+            description: req.body.description,
+            image: req.file.filename  //just save the image path so i can get it later
+          })
+          newProduct.save().then(product => res.json(product)).catch(err => console.log(err))
+        }
+        else {
+            res.status(400).json({message:'The product already exist'})
+          }
+        })
+      })
+      .catch(error => {
+        res.status(400).json({message:'an error has occurred'})
+      })
   }
 })
 
-router.put('/:id', function (req, res) {
-  console.log('finding one')
-  Product.findOne({id: req.params.id}).then(product => {
-    if(product) {
-      product.name = req.body.name,
-      product.price = req.body.price,
-      product.description = req.body.description,
-      product.image = req.file.originalname
-      product.save()
-      Product.find({}).then(products => {
-        res.status(200).json(products)
-      })
-      .catch(error => {
-          throw new Error(error)
-      })
-    }
-    else {
-      throw new Error({message:'An error has ocurred'})
-    }
-  })
-  .catch(error => {
-    throw new Error(error)
-  })
+router.put('/:id', upload.single('image'), function (req, res) {
+  //Form validation
+  const { errors, isValid } = validateProductInput(req.body)
+  // Check validation
+  if (!isValid) {
+    res.status(400).json({errors})
+  }
+  else {
+    Product.findOneAndUpdate({id:req.body.id}, {$set: {name:req.body.name, description:req.body.description, price:req.body.price, image:req.file.filename}}).then(product => {
+      if(product) {
+        product.save()
+        Product.find({}).then(products => {
+          res.status(200).json(products)
+        })
+        .catch(error => {
+            res.status(400).json({message:'error'})
+        })
+      }
+      else {
+        res.status(400).json({message:'An error has ocurred'})
+      }
+    })
+    .catch(error => {
+      res.status(400).json({message:error})
+    })
+   }
 })
 
-router.delete('/:id', function (req, res) {
+router.delete('/:id',function (req, res) {
   Product.findOneAndDelete({id:req.params.id}).then( product => {
     if(product) {
       res.status(200).json(product)
