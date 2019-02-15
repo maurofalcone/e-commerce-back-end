@@ -12,6 +12,7 @@ app.use(bodyParser.json())
 const db = require("./config/keys").mongoURI
 // Connect to MongoDB
 mongoose.connect(db, {useNewUrlParser: true}).then(() => console.log("MongoDB successfully connected")).catch(err => console.log(err))
+mongoose.set('useFindAndModify', false)
 // Passport middleware
 app.use(passport.initialize())
 // Passport config
