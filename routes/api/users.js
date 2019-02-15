@@ -1,15 +1,15 @@
-const express = require("express")
+const express = require('express')
 const router = express.Router()
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
-const keys = require("../../config/keys")
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const keys = require('../../config/keys')
 // Load input validation
-const validateRegisterInput = require("../../validations/register")
-const validateLoginInput = require("../../validations/login")
+const validateRegisterInput = require('../../validations/register')
+const validateLoginInput = require('../../validations/login')
 // Load User model
-const User = require("../../models/User")
+const User = require('../../models/User')
 
-router.post("/register", (req, res) => {
+router.post('/register', (req, res) => {
   // Form validation
 const { errors, isValid } = validateRegisterInput(req.body)
 // Check validation
@@ -19,7 +19,7 @@ const { errors, isValid } = validateRegisterInput(req.body)
   else {
     User.findOne({ email: req.body.email }).then(user => {
       if (user !== null) {
-        throw new Error({ email: "Email already exists" })
+        throw new Error({ email: 'Email already exists' })
       }
       else {
           const newUser = new User({
@@ -40,7 +40,7 @@ const { errors, isValid } = validateRegisterInput(req.body)
   }
 })
 
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
   // Form validation
 const { errors, isValid } = validateLoginInput(req.body)
 // Check validation
@@ -53,7 +53,7 @@ const { errors, isValid } = validateLoginInput(req.body)
   User.findOne({ email }).then(user => {
     // Check if user exists
     if (!user) {
-      throw new Error({ emailnotfound: "Email not found" })
+      throw new Error({ emailnotfound: 'Email not found' })
     }
 // Check password
     bcrypt.compare(password, user.password).then(isMatch => {
@@ -74,12 +74,12 @@ const { errors, isValid } = validateLoginInput(req.body)
           (err, token) => {
             res.json({
               success: true,
-              token: "Bearer " + token
+              token: 'Bearer ' + token
             })
           }
         )
       } else {
-        throw new Error({ passwordincorrect: "Password incorrect" })
+        throw new Error({ passwordincorrect: 'Password incorrect' })
       }
     })
   })
