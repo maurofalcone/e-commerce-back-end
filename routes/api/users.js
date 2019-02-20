@@ -55,33 +55,35 @@ const { errors, isValid } = validateLoginInput(req.body)
     if (!user) {
       throw new Error({ emailnotfound: 'Email not found' })
     }
-// Check password
-    bcrypt.compare(password, user.password).then(isMatch => {
-      if (isMatch) {
-        // User matched
-        // Create JWT Payload
-        const payload = {
-          id: user.id,
-          name: user.name
-        }
-// Sign token
-        jwt.sign(
-          payload,
-          keys.secretOrKey,
-          {
-            expiresIn: 31556926 // 1 year in seconds
-          },
-          (err, token) => {
-            res.json({
-              success: true,
-              token: 'Bearer ' + token
-            })
+    else {
+  // Check password
+      bcrypt.compare(password, user.password).then(isMatch => {
+        if (isMatch) {
+          // User matched
+          // Create JWT Payload
+          const payload = {
+            user: user
           }
-        )
-      } else {
-        throw new Error({ passwordincorrect: 'Password incorrect' })
-      }
-    })
+  // Sign token
+          jwt.sign(
+            payload,
+            keys.secretOrKey,
+            {
+              expiresIn: 31556926 // 1 year in seconds
+            },
+            (err, token) => {
+              res.json({
+                success: true,
+                token: 'Bearer ' + token
+              })
+            }
+          )
+        }
+        else {
+          res.status(400).json({ passwordincorrect: 'Password incorrect' })
+        }
+      })
+    }
   })
 })
 
