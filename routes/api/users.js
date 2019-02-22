@@ -4,16 +4,16 @@ const bcrypt = require('bcryptjs')
 const isEmpty= require('is-empty')
 const jwt = require('jsonwebtoken')
 const keys = require('../../config/keys')
-// Load input validation
+  // Load input validation
 const validateRegisterInput = require('../../validations/register')
 const validateLoginInput = require('../../validations/login')
-// Load User model
+  // Load User model
 const User = require('../../models/User')
 
 router.post('/register', (req, res) => {
   // Form validation
 const { errors, isValid } = validateRegisterInput(req.body)
-// Check validation
+  // Check validation
   if (!isValid) {
     res.status(400).json(errors)
   }
@@ -57,13 +57,13 @@ const { errors, isValid } = validateRegisterInput(req.body)
 router.post('/login', (req, res) => {
   // Form validation
 const { errors, isValid } = validateLoginInput(req.body)
-// Check validation
+  // Check validation
   if (!isValid) {
     throw new Error(errors)
   }
   const email = req.body.email
   const password = req.body.password
-// Find user by email
+  // Find user by email
   User.findOne({ email }).then(user => {
     // Check if user exists
     if (!user) {
@@ -88,7 +88,8 @@ const { errors, isValid } = validateLoginInput(req.body)
             (err, token) => {
               res.json({
                 success: true,
-                token: token
+                token: token,
+                isAuthenticated:true
               })
             }
           )
