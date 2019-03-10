@@ -46,11 +46,11 @@ router.get('/', function(req, res) {
       if(products)
         res.status(200).json(products)
       else {
-        throw new Error({message:'Product not found'})
+        res.status(400).json({error:'Product not found'})
       }
     })
   .catch(error => {
-      throw new Error(error)
+    res.status(400).json({error:error})
   })
 })
 
@@ -62,7 +62,7 @@ router.get('/:id', function (req, res) {
       res.status(200).json(products);
     }
     else {
-      throw new Error ({message:"this product does not exist"})
+      res.status(400).json({error:'This product does not exist'})
     }
   })
 })
@@ -74,7 +74,7 @@ router.post('/', upload.single('image'), function (req, res) {
   const { errors, isValid } = validateProductInput(req.body)
   // Check validation
   if (!isValid) {
-    return res.status(400).json({message:'errors'})
+    return res.status(400).json({error:errors})
   }
   else {
     let newId = 0;
@@ -87,7 +87,7 @@ router.post('/', upload.single('image'), function (req, res) {
       }
     })
     .catch(error => {
-      res.status(400).json({message:"an error has occurred"})
+      res.status(400).json({error:error})
     })
     .then(() => {
         Product.findOne({name:req.body.name}).then(product => {
@@ -103,12 +103,12 @@ router.post('/', upload.single('image'), function (req, res) {
           newProduct.save().then(product => res.json(product)).catch(err => console.log(err))
         }
         else {
-            res.status(400).json({message:'The product already exist'})
+            res.status(400).json({error:'The product already exist'})
           }
         })
       })
       .catch(error => {
-        res.status(400).json({message:'an error has occurred'})
+        res.status(400).json({error: error})
       })
   }
 })
@@ -128,7 +128,7 @@ router.put('/:id', upload.single('image'), function (req, res) {
           res.status(200).json(products)
         })
         .catch(error => {
-            res.status(400).json({message:'error'})
+            res.status(400).json({error:error})
         })
       }
       else {
@@ -136,7 +136,7 @@ router.put('/:id', upload.single('image'), function (req, res) {
       }
     })
     .catch(error => {
-      res.status(400).json({message:error})
+      res.status(400).json({error:error})
     })
    }
 })
@@ -147,11 +147,11 @@ router.delete('/:id',function (req, res) {
       res.status(200).json(product)
     }
     else {
-      throw new Error('The product can not be deleted')
+      res.status(400).json({error:error})
     }
   })
   .catch(error => {
-      throw new Error(error)
+    res.status(400).json({error:error})
     }
   )
 })

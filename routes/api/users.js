@@ -20,7 +20,7 @@ const { errors, isValid } = validateRegisterInput(req.body)
   else {
     User.findOne({ email: req.body.email }).then(user => {
       if (user) {
-        res.status(400).json({ email: 'Email already exists' })
+        res.status(400).json({ error: 'Email already exists' })
       }
       else {
         let newId = 0;
@@ -47,7 +47,7 @@ const { errors, isValid } = validateRegisterInput(req.body)
           })
         })
         .catch(error => {
-          res.status(400).json({message:"an error has occurred"})
+          res.status(400).json({error:error})
         })
       }
     })
@@ -59,7 +59,7 @@ router.post('/login', (req, res) => {
 const { errors, isValid } = validateLoginInput(req.body)
   // Check validation
   if (!isValid) {
-    throw new Error(errors)
+    res.status(400).json({errors})
   }
   const email = req.body.email
   const password = req.body.password
@@ -67,7 +67,7 @@ const { errors, isValid } = validateLoginInput(req.body)
   User.findOne({ email }).then(user => {
     // Check if user exists
     if (!user) {
-      throw new Error({ emailnotfound: 'Email not found' })
+      res.status(400).json({error:'Email not found'})
     }
     else {
   // Check password
