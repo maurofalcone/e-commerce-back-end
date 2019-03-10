@@ -95,7 +95,7 @@ const { errors, isValid } = validateLoginInput(req.body)
           )
         }
         else {
-          throw new Error({ error: 'Password incorrect' })
+          res.status(400).json({error:'Password Incorrect'})
         }
       })
     }
@@ -109,8 +109,8 @@ router.post('/checkJWT', (req, res) => {
     return res.status(200).json({data})
   }
    else {
-     throw new Error({error:'Failed to login'})
-   }
+    res.status(400).json({error:'Failed to login'})
+  }
  })
 
 module.exports = router
