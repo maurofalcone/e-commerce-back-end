@@ -18,9 +18,9 @@ app.use(passport.initialize())
 // Passport config
 require("./config/passport")(passport)
 
-app.use('/static', express.static('assets'));
-app.use('/api', api);
-app.use('/',dynamic);
+app.use('/static', express.static('assets'))
+app.use('/api', api)
+app.use('/',dynamic)
 
 
 // process.env.port is Heroku's port.
