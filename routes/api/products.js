@@ -68,8 +68,6 @@ router.get('/:id', function (req, res) {
 })
 
 router.post('/', upload.single('image'), function (req, res) {
-  console.log(req.body)
-  console.log(req.file)
   // Form validation
   const { errors, isValid } = validateProductInput(req.body)
   // Check validation
@@ -91,7 +89,6 @@ router.post('/', upload.single('image'), function (req, res) {
     })
     .then(() => {
         Product.findOne({name:req.body.name}).then(product => {
-          console.log(product)
         if(product === null) {
           const newProduct = new Product({
             id: newId,
