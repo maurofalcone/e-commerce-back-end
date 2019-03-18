@@ -1,5 +1,4 @@
 const express = require("express")
-const cors = require('cors')
 const router = express.Router()
 const isEmpty = require("is-empty")
 const multer = require('multer')
@@ -37,7 +36,7 @@ const upload = multer(
   }
 )
 
-const Product = require("../../models/products")
+const Product = require("../../models/product")
 
 const validateProductInput = require("../../validations/products")
 
